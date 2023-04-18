@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3 class="light-blue-text text-darken-4 center-align">Add Task</h3>
+<h3 class="light-blue-text text-darken-4 center-align">Edit Task</h3>
 
 <div class="row card-panel grey lighten-5">
-    <form class="col s12" method="POST" action="{{ url_for('add_task') }}">
+    <form class="col s12" method="POST" action="{{ url_for('edit_task', task_id=task.id) }}">
         <div class="row">
             <div class="input-field col s12">
                 <i class="fas fa-pencil-alt prefix light-blue-text text-darken-4"></i>
-                <input placeholder="Enter Name" name="task_name" id="task_name" type="text" class="validate"
-                    minlength="5" maxlength="50" required>
+                <input placeholder="Enter Name" value="{{ task.task_name }}" name="task_name" id="task_name" type="text"
+                    class="validate" minlength="5" maxlength="50" required>
                 <label for="task_name">Task Name</label>
             </div>
         </div>
@@ -17,15 +17,17 @@
             <div class="input-field col s12">
                 <i class="fas fa-align-left prefix light-blue-text text-darken-4"></i>
                 <textarea placeholder="Enter Description" name="task_description" id="task_description" type="text"
-                    class="validate materialize-textarea" minlength="5" maxlength="500" required></textarea>
+                    class="validate materialize-textarea" minlength="5" maxlength="500" required>
+                    {{- task.task_description -}}
+                </textarea>
                 <label for="task_description">Task Description</label>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s12">
                 <i class="fas fa-calendar-alt prefix light-blue-text text-darken-4"></i>
-                <input placeholder="Enter Date" name="due_date" id="due_date" type="text" class="datepicker validate"
-                    minlength="5" maxlength="50" required>
+                <input placeholder="Enter Date" value="{{ task.due_date.strftime('%d %B, %Y')}}" name="due_date"
+                    id="due_date" type="text" class="datepicker validate" minlength="5" maxlength="50" required>
                 <label for="due_date">Due Date</label>
             </div>
         </div>
@@ -34,7 +36,11 @@
                 <div class="switch">
                     <i class="fas fa-exclamation-circle prefix light-blue-text text-darken-4"></i>
                     <label for="is_urgent">
+                        {% if task.is_urgent == True %}
+                        <input name="is_urgent" id="is_urgent" type="checkbox" checked>
+                        {% else %}
                         <input name="is_urgent" id="is_urgent" type="checkbox">
+                        {% endif %}
                         <span class="lever"></span>
                         Is Urgent
                     </label>
@@ -45,18 +51,22 @@
             <div class="input-field col s12">
                 <i class="fas fa-folder-open prefix light-blue-text text-darken-4"></i>
                 <select id="category_id" name="category_id" class="validate" required>
-                  <option value="" disabled selected>Choose Category</option>
-                  {% for category in categories %}
-                  <option value="{{ category.id }}">{{ category.category_name }}</option>
-                  {% endfor %}
+                    <option value="" disabled>Choose Category</option>
+                    {% for category in categories %}
+                    {% if category == task.category %}
+                    <option value="{{ category.id }}" selected>{{ category.category_name }}</option>
+                    {% else %}
+                    <option value="{{ category.id }}">{{ category.category_name }}</option>
+                    {% endif %}
+                    {% endfor %}
                 </select>
                 <label>Category</label>
-              </div>
+            </div>
         </div>
         <div class="row">
             <div class="col s12 center-align">
                 <button type="submit" class="btn-large light-blue darken-1">
-                    Add Task <i class="fas fa-plus-square right"></i>
+                    Edit Task <i class="fas fa-plus-square right"></i>
                 </button>
             </div>
         </div>
